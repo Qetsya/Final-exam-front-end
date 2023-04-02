@@ -3,14 +3,16 @@ import LogIn from "./components/LogIn/LogIn";
 import Register from "./components/Register/Register";
 import Heading from "../../components/Heading/Heading";
 
-const LogInPage = () => {
+import formStyle from "../form.module.css"
+
+const LogInPage = ({authenticate}) => {
   return (
-    <div>
-      <div>
-        <Heading title={"Log In"} />
+    <div className={formStyle.root}>
+      <div className={formStyle.form_container}>
+        <Heading title={"Welcome!"} />
         <Input type={"email"} label={"Email"} />
         <Input type={"password"} label={"Password"} />
-        <LogIn type={"submit"} label={"Log In"} />
+        <LogIn type={"submit"} label={"Login"} authenticate={authenticate}/>
         <Register label={"Register"} />
       </div>
     </div>

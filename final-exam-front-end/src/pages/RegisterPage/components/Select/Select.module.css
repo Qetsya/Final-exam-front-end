@@ -1,0 +1,9 @@
+.select {
+    appearance: none;
+    background-color: transparent;
+    border: none;
+    padding: 0 1em 0 0;
+    width: 50%;
+    font-family: inherit;
+    cursor: pointer;
+}

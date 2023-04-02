@@ -1,14 +1,23 @@
 import Heading from "../../../components/Heading/Heading";
 import Input from "../components/Input/Input";
+import Select from "../components/Select/Select";
 
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-const WizardStep2 = ({ loadPreviuosStep, register, userData }) => {
+import styles from "../../form.module.css";
+import buttonStyle from "../../../components/button.module.css"
+
+const WizardStep2 = ({ loadPreviuosStep, register, userData, submit }) => {
+  const [loading, setLoading] = useState(false);
+  const [isDisabled, setIsDisabled] = useState(false);
   const [firsNameError, setFirstNameError] = useState(false);
   const [lastNameError, setLastNameError] = useState(false);
   const [termsError, setTermsError] = useState(false);
+  const navigate = useNavigate();
 
   const validate = (data) => {
+    console.log(`step2 validation data`, data)
     setFirstNameError(false);
     setLastNameError(false);
     setTermsError(false);
@@ -27,11 +36,15 @@ const WizardStep2 = ({ loadPreviuosStep, register, userData }) => {
     return true;
   };
 
-  const onSubmit = async (data) => {
-    const isValidationError = await validate(data);
+  const onSubmit = async () => {
+    const isValidationError = await validate(userData);
     if (!isValidationError) return;
+    setLoading(true);
+    submit();
+    setIsDisabled(true);
+    setLoading(false);
     console.log("you have submited!");
-    console.log(data);
+    navigate(-1);
   };
 
   const previousStep = () => {
@@ -43,17 +56,18 @@ const WizardStep2 = ({ loadPreviuosStep, register, userData }) => {
   const getAddress = (value) => (userData.address = value);
   const getGender = (value) => (userData.gender = value);
   const getTerms = (value) => (userData.terms = value);
-  const getNewsLetter = (value) => (userData.newsletter = value);
+  const getNewsLetter = (value) => (userData.newsLetter = value);
 
   return (
-    <div>
-      <Heading title={"Register Step2"} />
+    <div className={styles.form_container}>
+      <Heading title={"Register"} />
       <Input
         type={"text"}
         label={"First Name"}
         name={"firstName"}
         register={register}
-        onchange={getFirstName}
+        onChange={getFirstName}
+        disabled={isDisabled}
       />
       {firsNameError && <p>Please insert your name</p>}
       <Input
@@ -61,7 +75,8 @@ const WizardStep2 = ({ loadPreviuosStep, register, userData }) => {
         label={"Last Name"}
         name={"lastName"}
         register={register}
-        onchange={getLastName}
+        onChange={getLastName}
+        disabled={isDisabled}
       />
       {lastNameError && <p>Please insert your last name</p>}
       <Input
@@ -69,21 +84,20 @@ const WizardStep2 = ({ loadPreviuosStep, register, userData }) => {
         label={"Address"}
         name={"address"}
         register={register}
-        onchange={getAddress}
+        onChange={getAddress}
+        disabled={isDisabled}
       />
 
-      <select name="gender">
-        <option value="choose">Choose gender</option>
-        <option value="male">Male</option>
-        <option value="female">Female</option>
-      </select>
+    <Select register={register} onChange={getGender}/>
+
 
       <Input
         type={"checkbox"}
-        label={"I accept terms and conditions checkbox"}
+        label={"I accept terms and conditions"}
         name={"terms"}
         register={register}
-        onchange={getTerms}
+        onChange={getTerms}
+        disabled={isDisabled}
       />
       {termsError && <p>Please agree to our terms and conditions</p>}
       <Input
@@ -91,14 +105,15 @@ const WizardStep2 = ({ loadPreviuosStep, register, userData }) => {
         label={"Subscribe to news letter"}
         name={"newsletter"}
         register={register}
-        onchange={getNewsLetter}
+        onChange={getNewsLetter}
+        disabled={isDisabled}
       />
 
-      <button type="button" onClick={previousStep}>
+      <button className={buttonStyle.button} type="button" onClick={previousStep}>
         Back
       </button>
-      <button type="submit" onClick={onSubmit}>
-        Submit
+      <button className={buttonStyle.button} type="button" onClick={onSubmit}>
+        {loading ? "Loading" : "Submit"}
       </button>
     </div>
   );

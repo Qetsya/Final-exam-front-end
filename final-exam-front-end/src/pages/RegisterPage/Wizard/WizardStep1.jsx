@@ -4,6 +4,9 @@ import { validEmail, validPassword } from "./regex.js";
 
 import { useState } from "react";
 
+import styles from "../../form.module.css";
+import buttonStyle from "../../../components/button.module.css"
+
 const WizardStep1 = ({ loadNextStep, register, userData }) => {
   const [emailError, setEmailError] = useState(false);
   const [passwordError, setPasswordError] = useState(false);
@@ -11,8 +14,8 @@ const WizardStep1 = ({ loadNextStep, register, userData }) => {
 
   const nextStep = async () => {
     console.log(`step1 validate data `, userData);
-    const isValidationError = await validate(userData);
-    if (!isValidationError) return;
+    // const isValidationError = await validate(userData);
+    // if (!isValidationError) return;
     loadNextStep();
   };
 
@@ -39,27 +42,19 @@ const WizardStep1 = ({ loadNextStep, register, userData }) => {
     return true;
   };
 
-  const getEmail = (value) => {
-    userData.email = value;
-  };
-
-  const getPassword = (value) => {
-    userData.password = value;
-  };
-
-  const getRepPassword = (value) => {
-    userData.repeatPassword = value;
-  };
+  const getEmail = (value) => (userData.email = value);
+  const getPassword = (value) => (userData.password = value);
+  const getRepPassword = (value) => (userData.repeatPassword = value);
 
   return (
-    <div>
-      <Heading title={"Register Step1"} />
+    <div className={styles.form_container}>
+      <Heading title={"Register"} />
       <Input
         type={"email"}
         label={"Email"}
         name={"email"}
         register={register}
-        onchange={getEmail}
+        onChange={getEmail}
       />
       {emailError && <p>Please insert a valid email address</p>}
       <Input
@@ -67,7 +62,7 @@ const WizardStep1 = ({ loadNextStep, register, userData }) => {
         label={"Password"}
         name={"password"}
         register={register}
-        onchange={getPassword}
+        onChange={getPassword}
       />
       {passwordError && (
         <p>
@@ -80,11 +75,11 @@ const WizardStep1 = ({ loadNextStep, register, userData }) => {
         label={"Repeat password"}
         name={"repeatPassword"}
         register={register}
-        onchange={getRepPassword}
+        onChange={getRepPassword}
       />
       {passwordMatchError && <p>Your passwords must match</p>}
 
-      <button type="button" onClick={nextStep}>
+      <button className={buttonStyle.button} type="button" onClick={nextStep}>
         Next
       </button>
     </div>

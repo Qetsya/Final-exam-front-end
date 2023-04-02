@@ -4,6 +4,8 @@ import WizardStep2 from "./Wizard/WizardSept2";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 
+import formStyle from "../form.module.css"
+
 const user = {
   email: "",
   password: "",
@@ -11,33 +13,25 @@ const user = {
   firstName: "",
   lastName: "",
   address: "",
-  gender: null,
+  gender: "",
   terms: false,
-  newsletter: false,
-};
+  newsLetter: false,
+}
 
 const RegisterPage = () => {
   const [activeStep1, setActiveStep1] = useState(true);
   const [activeStep2, setActiveStep2] = useState(false);
 
   const { register, handleSubmit } = useForm({
-    userData: user,
+    defaultValues: user,
   });
 
-  // const [userData, setUserData] = useState({});
-
-  // const getData = (value) => {
-  //   const newData = value;
-  //   setUserData({ ...userData, newData });
-  //   console.log(`Register PAGE `, userData);
-  // };
-
-  const onSubmit = (data) => {
-    console.log(`Register page form data `, data);
+  const onSubmit = () => {
+    console.log(`Register page form data `, user);
   };
 
   return (
-    <div>
+    <div className={formStyle.root}>
       <form onSubmit={handleSubmit(onSubmit)}>
         {activeStep1 && (
           <WizardStep1
@@ -57,6 +51,7 @@ const RegisterPage = () => {
             }}
             register={register}
             userData={user}
+            submit={onSubmit}
           />
         )}
       </form>

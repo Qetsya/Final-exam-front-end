@@ -1,10 +1,12 @@
-const LogIn = ({ type, label }) => {
+import styles from "../../../../components/button.module.css"
+const LogIn = ({ type, label, authenticate }) => {
+
   const handleSubmit = () => {
-    console.log({ label });
+    authenticate();
   };
 
   return (
-    <button type={type} onClick={handleSubmit}>
+    <button className={styles.button} type={type} onClick={handleSubmit}>
       {label}
     </button>
   );
