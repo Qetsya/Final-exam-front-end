@@ -1,0 +1,23 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.5rem;
+
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.title {
+  text-align: center;
+  font-size: 2rem;
+}
+
+.heading {
+  font-size: 1.3rem;
+  margin: 0;
+}
+
+.detail {
+  margin: 0;
+}

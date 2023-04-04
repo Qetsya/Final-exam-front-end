@@ -12,20 +12,25 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 
 function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [authenticatedUserId, setAuthenticatedUserId] = useState(null);
   const navigate = useNavigate();
 
-  const authenticate = () => {
-    setIsAuthenticated(true);
-    navigate("/home");
+  const authenticate = (userId) => {
+    setAuthenticatedUserId(userId);
+    navigate(routes.home);
   };
+
+  const logoutUser = () => {
+    setAuthenticatedUserId(null);
+  }
+
   return (
     <div>
-      <Navbar />
+      <Navbar isAuthenticated={authenticatedUserId} />
       <Layout>
         <Routes>
           <Route
-            path={routes.logIn}
+            path={routes.login}
             element={
               <LogInPage
                 authenticate={authenticate}
@@ -33,7 +38,7 @@ function App() {
             }
           />
           <Route path={routes.register} element={<RegisterPage />} />
-          <Route path={routes.home} element={<HomePage isAuthenticated={isAuthenticated}/>} />
+          <Route index path={routes.home} element={<HomePage isAuthenticated={authenticatedUserId} logoutUser={logoutUser} />} />
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </Layout>

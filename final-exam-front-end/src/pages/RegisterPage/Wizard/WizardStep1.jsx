@@ -1,45 +1,21 @@
 import Heading from "../../../components/Heading/Heading";
 import Input from "../components/Input/Input";
-import { validEmail, validPassword } from "./regex.js";
+import { routes } from "../../../components/routes/routes";
+import { Link } from "react-router-dom";
 
-import { useState } from "react";
+import useValidateStep1 from "./hook/useValidateStep1";
 
-import styles from "../../form.module.css";
-import buttonStyle from "../../../components/button.module.css"
+import styles from "../../../components/form.module.css";
+import buttonStyle from "../../../components/button.module.css";
 
-const WizardStep1 = ({ loadNextStep, register, userData }) => {
-  const [emailError, setEmailError] = useState(false);
-  const [passwordError, setPasswordError] = useState(false);
-  const [passwordMatchError, setPasswordMatchError] = useState(false);
+const WizardStep1 = ({ loadNextStep, register, userData, emptyUserData }) => {
+  const { emailError, passwordError, passwordMatchError, validate } =
+    useValidateStep1();
 
   const nextStep = async () => {
-    console.log(`step1 validate data `, userData);
-    // const isValidationError = await validate(userData);
-    // if (!isValidationError) return;
+    const isValidationError = await validate(userData);
+    if (!isValidationError) return;
     loadNextStep();
-  };
-
-  const validate = (data) => {
-    setEmailError(false);
-    setPasswordMatchError(false);
-    setPasswordError(false);
-    if (
-      !validEmail.test(data.email) ||
-      !validPassword.test(data.password) ||
-      data.password !== data.repeatPassword
-    ) {
-      if (!validEmail.test(data.email)) {
-        setEmailError(true);
-      }
-      if (!validPassword.test(data.password)) {
-        setPasswordError(true);
-      }
-      if (data.password !== data.repeatPassword) {
-        setPasswordMatchError(true);
-      }
-      return false;
-    }
-    return true;
   };
 
   const getEmail = (value) => (userData.email = value);
@@ -47,7 +23,7 @@ const WizardStep1 = ({ loadNextStep, register, userData }) => {
   const getRepPassword = (value) => (userData.repeatPassword = value);
 
   return (
-    <div className={styles.form_container}>
+    <div className={styles.container}>
       <Heading title={"Register"} />
       <Input
         type={"email"}
@@ -56,7 +32,11 @@ const WizardStep1 = ({ loadNextStep, register, userData }) => {
         register={register}
         onChange={getEmail}
       />
-      {emailError && <p>Please insert a valid email address</p>}
+      {emailError && (
+        <span className={styles.error}>
+          Please insert a valid email address
+        </span>
+      )}
       <Input
         type={"password"}
         label={"Password"}
@@ -65,10 +45,10 @@ const WizardStep1 = ({ loadNextStep, register, userData }) => {
         onChange={getPassword}
       />
       {passwordError && (
-        <p>
-          Your passwords must have at least 8 characters, contain an uppercase
-          letter and a number.
-        </p>
+        <span className={styles.error}>
+          Your passwords must have at least 6 characters, <br></br>contain an
+          uppercase letter and a number
+        </span>
       )}
       <Input
         type={"password"}
@@ -77,11 +57,16 @@ const WizardStep1 = ({ loadNextStep, register, userData }) => {
         register={register}
         onChange={getRepPassword}
       />
-      {passwordMatchError && <p>Your passwords must match</p>}
+      {passwordMatchError && (
+        <span className={styles.error}>Your passwords must match</span>
+      )}
 
       <button className={buttonStyle.button} type="button" onClick={nextStep}>
         Next
       </button>
+      <Link className={styles.back} to={routes.login} onClick={emptyUserData}>
+        Go back
+      </Link>
     </div>
   );
 };

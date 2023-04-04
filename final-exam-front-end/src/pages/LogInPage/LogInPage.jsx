@@ -1,19 +1,35 @@
 import Input from "../../components/Input/Input";
-import LogIn from "./components/LogIn/LogIn";
-import Register from "./components/Register/Register";
+import LogInButton from "./components/LogInButton/LogInButton";
+import RegisterButton from "./components/RegisterButton/RegisterButton";
 import Heading from "../../components/Heading/Heading";
 
-import formStyle from "../form.module.css"
+import formStyle from "../../components/form.module.css";
+import { useState } from "react";
 
-const LogInPage = ({authenticate}) => {
+const LogInPage = ({ authenticate }) => {
+  const [user, setUser] = useState({});
+
+  const getEmail = (value) => {
+    setUser({ email: value });
+  };
+
+  const getPassword = (value) => {
+    setUser({ ...user, password: value });
+  };
+
   return (
     <div className={formStyle.root}>
-      <div className={formStyle.form_container}>
+      <div className={formStyle.form_container + " " + formStyle.container}>
         <Heading title={"Welcome!"} />
-        <Input type={"email"} label={"Email"} />
-        <Input type={"password"} label={"Password"} />
-        <LogIn type={"submit"} label={"Login"} authenticate={authenticate}/>
-        <Register label={"Register"} />
+        <Input type={"email"} label={"Email"} onChange={getEmail} />
+        <Input type={"password"} label={"Password"} onChange={getPassword} />
+        <LogInButton
+          type={"submit"}
+          label={"Login"}
+          authenticate={authenticate}
+          userData={user}
+        />
+        <RegisterButton label={"Register"} />
       </div>
     </div>
   );

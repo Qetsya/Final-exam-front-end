@@ -2,49 +2,47 @@ import Heading from "../../../components/Heading/Heading";
 import Input from "../components/Input/Input";
 import Select from "../components/Select/Select";
 
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import useValidateStep2 from "./hook/useValidateStep2";
+import { useEffect, useState } from "react";
+import { AiOutlineHourglass } from "react-icons/ai";
 
-import styles from "../../form.module.css";
-import buttonStyle from "../../../components/button.module.css"
+import styles from "../../../components/form.module.css";
+import buttonStyle from "../../../components/button.module.css";
 
-const WizardStep2 = ({ loadPreviuosStep, register, userData, submit }) => {
+const WizardStep2 = ({
+  loadPreviuosStep,
+  register,
+  userData,
+  submit,
+  serverError,
+}) => {
   const [loading, setLoading] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false);
-  const [firsNameError, setFirstNameError] = useState(false);
-  const [lastNameError, setLastNameError] = useState(false);
-  const [termsError, setTermsError] = useState(false);
-  const navigate = useNavigate();
+  const [error, setError] = useState(null);
+  const { firsNameError, lastNameError, termsError, validate } =
+    useValidateStep2();
 
-  const validate = (data) => {
-    console.log(`step2 validation data`, data)
-    setFirstNameError(false);
-    setLastNameError(false);
-    setTermsError(false);
-    if (!data.firstName || !data.lastName || !data.terms) {
-      if (!data.firstName) {
-        setFirstNameError(true);
-      }
-      if (!data.lastName) {
-        setLastNameError(true);
-      }
-      if (!data.terms) {
-        setTermsError(true);
-      }
-      return false;
+  useEffect(() => {
+    if (serverError) {
+      setError(serverError);
+      setIsDisabled(false);
+      setTimeout(() => {
+        setError(null);
+      }, 10000);
     }
-    return true;
-  };
+  }, [serverError]);
 
-  const onSubmit = async () => {
-    const isValidationError = await validate(userData);
-    if (!isValidationError) return;
+  const beforeSubmit = async () => {
     setLoading(true);
-    submit();
+    const isValidationError = await validate(userData);
+    if (!isValidationError) {
+      setLoading(false);
+      setError("Failed to register");
+      return;
+    }
     setIsDisabled(true);
+    await submit();
     setLoading(false);
-    console.log("you have submited!");
-    navigate(-1);
   };
 
   const previousStep = () => {
@@ -55,11 +53,12 @@ const WizardStep2 = ({ loadPreviuosStep, register, userData, submit }) => {
   const getLastName = (value) => (userData.lastName = value);
   const getAddress = (value) => (userData.address = value);
   const getGender = (value) => (userData.gender = value);
-  const getTerms = (value) => (userData.terms = value);
-  const getNewsLetter = (value) => (userData.newsLetter = value);
+  const getTerms = (value) => (userData.terms = value === "on" ? true : false);
+  const getNewsLetter = (value) =>
+    (userData.newsLetter = value === "on" ? true : false);
 
   return (
-    <div className={styles.form_container}>
+    <div className={styles.container}>
       <Heading title={"Register"} />
       <Input
         type={"text"}
@@ -69,7 +68,10 @@ const WizardStep2 = ({ loadPreviuosStep, register, userData, submit }) => {
         onChange={getFirstName}
         disabled={isDisabled}
       />
-      {firsNameError && <p>Please insert your name</p>}
+      {firsNameError && (
+        <span className={styles.error}>Please insert your name</span>
+      )}
+
       <Input
         type={"text"}
         label={"Last Name"}
@@ -78,7 +80,10 @@ const WizardStep2 = ({ loadPreviuosStep, register, userData, submit }) => {
         onChange={getLastName}
         disabled={isDisabled}
       />
-      {lastNameError && <p>Please insert your last name</p>}
+      {lastNameError && (
+        <span className={styles.error}>Please insert your last name</span>
+      )}
+
       <Input
         type={"text"}
         label={"Address"}
@@ -88,8 +93,7 @@ const WizardStep2 = ({ loadPreviuosStep, register, userData, submit }) => {
         disabled={isDisabled}
       />
 
-    <Select register={register} onChange={getGender}/>
-
+      <Select register={register} onChange={getGender} />
 
       <Input
         type={"checkbox"}
@@ -99,7 +103,12 @@ const WizardStep2 = ({ loadPreviuosStep, register, userData, submit }) => {
         onChange={getTerms}
         disabled={isDisabled}
       />
-      {termsError && <p>Please agree to our terms and conditions</p>}
+      {termsError && (
+        <span className={styles.error}>
+          Please agree to our terms and conditions
+        </span>
+      )}
+
       <Input
         type={"checkbox"}
         label={"Subscribe to news letter"}
@@ -108,12 +117,22 @@ const WizardStep2 = ({ loadPreviuosStep, register, userData, submit }) => {
         onChange={getNewsLetter}
         disabled={isDisabled}
       />
+      {error && <span className={styles.error}>{error}</span>}
 
-      <button className={buttonStyle.button} type="button" onClick={previousStep}>
+      <button
+        className={buttonStyle.button}
+        type="button"
+        onClick={previousStep}
+      >
         Back
       </button>
-      <button className={buttonStyle.button} type="button" onClick={onSubmit}>
-        {loading ? "Loading" : "Submit"}
+
+      <button
+        className={buttonStyle.button}
+        type="button"
+        onClick={beforeSubmit}
+      >
+        {loading ? <AiOutlineHourglass className={styles.loading} /> : "Submit"}
       </button>
     </div>
   );

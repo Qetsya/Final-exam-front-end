@@ -1,9 +1,9 @@
 .root {
-    display: flex;
-    justify-content: space-between;
-    padding-bottom: 0.3rem;
-    gap: 1rem;
-    border-bottom-width: 3px;
-    border-bottom-style: solid;
-    border-image: linear-gradient(to right, #0013b7, #1CB5E0) 1;
+  display: flex;
+  justify-content: space-between;
+  padding-bottom: 0.3rem;
+  gap: 1rem;
+  border-bottom-width: 2px;
+  border-bottom-style: solid;
+  border-image: linear-gradient(to right, #0013b7, #1cb5e0) 1;
 }
